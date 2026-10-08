@@ -682,7 +682,7 @@ public class PackageUtils {
      * {@code
      * <manifest
      *     <queries>
-     *         <package android:name="com.termux" />
+     *         <package android:name="com.t3rmux" />
      *    </queries>
      *
      *    <application
