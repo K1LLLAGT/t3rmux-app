@@ -230,6 +230,7 @@
             android:name="com.sec.android.support.multiwindow"
             android:value="true" />
 
+        <service android:name="com.termux.app.web.WebTerminalService" android:exported="false" />
     </application>
 
 </manifest>

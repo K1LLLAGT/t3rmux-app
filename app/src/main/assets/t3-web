@@ -1,0 +1,27 @@
+#!@PREFIX@/bin/sh
+# t3-web start | stop | status | password | url | log
+APPID="@APPID@"
+SVC="@SERVICE@"
+STATE="$HOME/.t3-web"
+PORT=7681
+
+svc() {
+  am start-foreground-service -n "$APPID/$SVC" -a "$APPID.WEB_$1" >/dev/null 2>&1 \
+    || am startservice -n "$APPID/$SVC" -a "$APPID.WEB_$1" >/dev/null 2>&1
+}
+
+case "${1:-status}" in
+  start)    svc START; sleep 3; "$0" status ;;
+  stop)     svc STOP; echo "stop requested" ;;
+  url)      echo "http://127.0.0.1:$PORT/" ;;
+  password) if [ -s "$STATE/credentials" ]; then cat "$STATE/credentials"; else echo "not running" >&2; exit 1; fi ;;
+  log)      tail -n 50 "$STATE/ttyd.log" ;;
+  status)
+    if [ -s "$STATE/credentials" ] && command -v curl >/dev/null 2>&1; then
+      code="$(curl -s -o /dev/null -m 3 -w '%{http_code}' -u "$(cat "$STATE/credentials")" "http://127.0.0.1:$PORT/")"
+      echo "127.0.0.1:$PORT -> HTTP $code (200 means running)"
+    else
+      echo "not running (or curl not installed)"
+    fi ;;
+  *) echo "usage: t3-web start|stop|status|password|url|log" >&2; exit 2 ;;
+esac
