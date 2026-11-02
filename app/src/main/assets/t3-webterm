@@ -1,0 +1,25 @@
+#!@PREFIX@/bin/sh
+# Started by WebTerminalService. Binds ttyd to loopback ONLY.
+# If binding by address fails on your device, try:  -i lo
+STATE="$HOME/.t3-web"
+PORT="${T3_WEB_PORT:-7681}"
+
+if ! command -v ttyd >/dev/null 2>&1; then
+  if [ -f "$STATE/ttyd-t3rmux.tar.gz" ]; then
+    echo "Installing bundled ttyd..."
+    tar -xzf "$STATE/ttyd-t3rmux.tar.gz" -C "@PREFIX@" || exit 1
+  else
+    echo "ttyd not found and no bundled archive. Run bundle-ttyd.sh first." >&2
+    exit 127
+  fi
+fi
+
+[ -s "$STATE/credentials" ] || { echo "no credentials file" >&2; exit 1; }
+CRED="$(cat "$STATE/credentials")"
+
+LOGIN="@PREFIX@/bin/login"
+[ -x "$LOGIN" ] || LOGIN="@PREFIX@/bin/bash"
+
+# -O  reject cross-origin websockets (stops other web pages hijacking the terminal)
+# -W  writable terminal     -m 3  at most 3 clients
+exec ttyd -i 127.0.0.1 -p "$PORT" -c "$CRED" -O -W -m 3 "$LOGIN"

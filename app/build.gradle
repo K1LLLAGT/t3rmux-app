@@ -13,7 +13,7 @@ ext {
 }
 
 android {
-    namespace "com.t3rmux"
+    namespace "com.termux"
 
     compileSdkVersion project.properties.compileSdkVersion.toInteger()
     ndkVersion = System.getenv("JITPACK_NDK_VERSION") ?: project.properties.ndkVersion

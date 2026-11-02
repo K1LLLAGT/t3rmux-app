@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - 'github-releases/**'
+      - web-terminal
   pull_request:
     branches:
       - master
